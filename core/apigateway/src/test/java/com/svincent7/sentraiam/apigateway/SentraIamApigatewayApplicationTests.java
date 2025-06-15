@@ -9,17 +9,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 class SentraIamApigatewayApplicationTests {
 
 	@Autowired
-	private SentraIamApigatewayApplication discoveryApplication;
+	private SentraIamApigatewayApplication apigatewayApplication;
 
 	@Test
 	public void contextLoads() {
 		// Ensure that the application context loads successfully
-		Assertions.assertNotNull(discoveryApplication);
+		Assertions.assertNotNull(apigatewayApplication);
 	}
 
 	@Test
 	public void testApplicationStart() {
-		discoveryApplication.main(new String[] {});
+		apigatewayApplication.main(new String[] {});
 	}
 
 }

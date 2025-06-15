@@ -9,17 +9,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 class SentraIamIdentityApplicationTests {
 
 	@Autowired
-	private SentraIamIdentityApplication discoveryApplication;
+	private SentraIamIdentityApplication identityApplication;
 
 	@Test
 	public void contextLoads() {
 		// Ensure that the application context loads successfully
-		Assertions.assertNotNull(discoveryApplication);
+		Assertions.assertNotNull(identityApplication);
 	}
 
 	@Test
 	public void testApplicationStart() {
-		discoveryApplication.main(new String[] {});
+		identityApplication.main(new String[] {});
 	}
 
 }

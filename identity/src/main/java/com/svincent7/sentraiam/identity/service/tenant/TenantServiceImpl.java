@@ -1,0 +1,28 @@
+package com.svincent7.sentraiam.identity.service.tenant;
+
+import com.svincent7.sentraiam.common.dto.tenant.TenantRequest;
+import com.svincent7.sentraiam.common.dto.tenant.TenantResponse;
+import com.svincent7.sentraiam.common.service.BaseMapper;
+import com.svincent7.sentraiam.identity.model.TenantEntity;
+import com.svincent7.sentraiam.identity.repository.TenantRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class TenantServiceImpl extends TenantService {
+
+    private final TenantRepository tenantRepository;
+    private final TenantMapper tenantMapper;
+
+    @Override
+    protected JpaRepository<TenantEntity, String> getRepository() {
+        return tenantRepository;
+    }
+
+    @Override
+    protected BaseMapper<TenantEntity, TenantRequest, TenantResponse> getMapper() {
+        return tenantMapper;
+    }
+}
