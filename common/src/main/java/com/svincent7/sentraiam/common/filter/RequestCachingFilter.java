@@ -28,8 +28,8 @@ public class RequestCachingFilter extends OncePerRequestFilter {
         this(CachedLoggerConstant.EXCLUDED_RESPONSE_PATHS);
     }
 
-    public RequestCachingFilter(final Set<String> excludedRequestPath) {
-        this.excludedRequestPath = excludedRequestPath;
+    public RequestCachingFilter(final Set<String> excludedRequestPathInjection) {
+        this.excludedRequestPath = excludedRequestPathInjection;
     }
 
     @Override
@@ -43,8 +43,8 @@ public class RequestCachingFilter extends OncePerRequestFilter {
         }
 
         CachedHttpServletRequest cachedHttpServletRequest = new CachedHttpServletRequest(servletRequest);
-        log.info(CachedLoggerConstant.REQUEST_PREFIX +
-                IOUtils.toString(cachedHttpServletRequest.getInputStream(), StandardCharsets.UTF_8));
+        log.info(CachedLoggerConstant.REQUEST_PREFIX + IOUtils.toString(
+                cachedHttpServletRequest.getInputStream(), StandardCharsets.UTF_8));
         filterChain.doFilter(cachedHttpServletRequest, servletResponse);
     }
 }

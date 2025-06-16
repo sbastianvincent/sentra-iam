@@ -12,9 +12,11 @@ public class CachedServletOutputStream extends ServletOutputStream {
     private final OutputStream outputStream;
     private final ByteArrayOutputStream copy;
 
-    public CachedServletOutputStream(final OutputStream outputStream) {
-        this.outputStream = outputStream;
-        this.copy = new ByteArrayOutputStream(1024);
+    private static final int BUFFER_SIZE = 1024;
+
+    public CachedServletOutputStream(final OutputStream out) {
+        this.outputStream = out;
+        this.copy = new ByteArrayOutputStream(BUFFER_SIZE);
     }
 
     @Override
@@ -33,7 +35,7 @@ public class CachedServletOutputStream extends ServletOutputStream {
     }
 
     @Override
-    public void setWriteListener(WriteListener writeListener) {
+    public void setWriteListener(final WriteListener writeListener) {
         throw new UnsupportedOperationException();
     }
 }

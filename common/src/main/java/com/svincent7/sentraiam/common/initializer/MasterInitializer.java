@@ -10,9 +10,9 @@ public class MasterInitializer {
     private final Collection<Initializer> initializers;
     private final ConfigProperties configProperties;
 
-    public MasterInitializer(final Collection<Initializer> initializers, final ConfigProperties configProperties) {
-        this.initializers = initializers;
-        this.configProperties = configProperties;
+    public MasterInitializer(final Collection<Initializer> initializerCollection, final ConfigProperties config) {
+        this.initializers = initializerCollection;
+        this.configProperties = config;
     }
 
     @PostConstruct
