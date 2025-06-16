@@ -2,6 +2,7 @@ package com.svincent7.sentraiam.identity.service.credential;
 
 import com.svincent7.sentraiam.common.dto.credential.CredentialRequest;
 import com.svincent7.sentraiam.common.dto.credential.CredentialResponse;
+import com.svincent7.sentraiam.common.exception.InvalidPasswordException;
 import com.svincent7.sentraiam.common.service.BaseMapper;
 import com.svincent7.sentraiam.identity.model.CredentialEntity;
 import com.svincent7.sentraiam.identity.model.UserEntity;
@@ -34,8 +35,10 @@ public abstract class CredentialMapper implements BaseMapper<CredentialEntity, C
         switch (entity.getType()) {
             case PASSWORD:
                 if (entity.getSecretData() != null) {
-                    secretService.verifyHashSecretPair(Pair.of(entity.getSecretData(), entity.getCredentialData()),
-                            request.getOldPassword());
+                    if (!secretService.verifyHashSecretPair(Pair.of(entity.getSecretData(), entity.getCredentialData()),
+                            request.getOldPassword())) {
+                        throw new InvalidPasswordException();
+                    }
                 }
                 Pair<String, String> secrets = secretService.generateHashSecretPair(request.getSecret());
                 entity.setSecretData(secrets.getFirst());
@@ -67,6 +70,7 @@ public abstract class CredentialMapper implements BaseMapper<CredentialEntity, C
                 credential.setIdentifier(request.getIdentifier());
                 break;
         }
+
         credential.setVersion(1);
         updateEntityFromDTO(request, credential);
 

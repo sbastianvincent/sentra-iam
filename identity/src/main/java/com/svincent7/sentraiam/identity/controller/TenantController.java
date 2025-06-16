@@ -6,7 +6,10 @@ import com.svincent7.sentraiam.common.dto.tenant.TenantResponse;
 import com.svincent7.sentraiam.identity.model.TenantEntity;
 import com.svincent7.sentraiam.identity.service.tenant.TenantService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -18,5 +21,11 @@ public class TenantController extends BaseController<TenantEntity, TenantRequest
     @Override
     protected TenantService getService() {
         return tenantService;
+    }
+
+    @RequestMapping(value = "/by-name/{tenantName}", method = RequestMethod.GET)
+    public ResponseEntity<TenantResponse> getTenantByName(final @PathVariable String tenantName) {
+        TenantResponse tenantResponse = tenantService.getTenantByName(tenantName);
+        return ResponseEntity.ok(tenantResponse);
     }
 }

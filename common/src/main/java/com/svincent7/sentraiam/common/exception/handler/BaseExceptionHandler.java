@@ -1,5 +1,7 @@
 package com.svincent7.sentraiam.common.exception.handler;
 
+import com.svincent7.sentraiam.common.exception.AuthenticationException;
+import com.svincent7.sentraiam.common.exception.BadRequestException;
 import com.svincent7.sentraiam.common.exception.BaseErrorException;
 import com.svincent7.sentraiam.common.exception.HashingException;
 import com.svincent7.sentraiam.common.exception.InvalidPasswordException;
@@ -56,9 +58,23 @@ public abstract class BaseExceptionHandler {
         return ApiErrorResponse.buildFromBaseErrorException(exception, request.getRequestURI());
     }
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(AuthenticationException.class)
+    public ApiErrorResponse handleAuthenticationException(final BaseErrorException exception,
+                                               final HttpServletRequest request) {
+        return ApiErrorResponse.buildFromBaseErrorException(exception, request.getRequestURI());
+    }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ResourceNotFoundException.class)
     public ApiErrorResponse handleResourceNotFoundException(final BaseErrorException exception,
+                                                            final HttpServletRequest request) {
+        return ApiErrorResponse.buildFromBaseErrorException(exception, request.getRequestURI());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BadRequestException.class)
+    public ApiErrorResponse handleBadRequestException(final BaseErrorException exception,
                                                             final HttpServletRequest request) {
         return ApiErrorResponse.buildFromBaseErrorException(exception, request.getRequestURI());
     }

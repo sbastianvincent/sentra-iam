@@ -40,7 +40,7 @@ public class SecretServiceImpl implements SecretService {
     }
 
     @Override
-    public void verifyHashSecretPair(final Pair<String, String> secretPair, final String password) {
+    public boolean verifyHashSecretPair(final Pair<String, String> secretPair, final String password) {
         if (StringUtils.isEmpty(password) || StringUtils.isEmpty(secretPair.getFirst())
                 || StringUtils.isEmpty(secretPair.getSecond())) {
             throw new InvalidPasswordException();
@@ -59,8 +59,6 @@ public class SecretServiceImpl implements SecretService {
         HashData encodedHash = hashFactory.generateHashData(password, salt, credentialData.getIterations(),
                 credentialData.getAlgorithm());
 
-        if (!encodedHash.getSecretData().getValue().equals(secretData.getValue())) {
-            throw new InvalidPasswordException();
-        }
+        return encodedHash.getSecretData().getValue().equals(secretData.getValue());
     }
 }

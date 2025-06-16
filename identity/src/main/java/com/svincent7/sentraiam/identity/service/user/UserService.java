@@ -6,4 +6,5 @@ import com.svincent7.sentraiam.common.service.BaseService;
 import com.svincent7.sentraiam.identity.model.UserEntity;
 
 public abstract class UserService extends BaseService<UserEntity, UserRequest, UserResponse, String> {
+    public abstract UserResponse getByUsernameAndTenantId(String username, String tenantId);
 }

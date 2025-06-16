@@ -10,8 +10,12 @@ public final class Salt {
     }
 
     public static byte[] generateSalt() {
+        return generateSalt(SALT_LENGTH);
+    }
+
+    public static byte[] generateSalt(final int length) {
         SecureRandom random = new SecureRandom();
-        byte[] salt = new byte[SALT_LENGTH];
+        byte[] salt = new byte[length];
         random.nextBytes(salt);
         return salt;
     }

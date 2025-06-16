@@ -2,6 +2,7 @@ package com.svincent7.sentraiam.identity.service.tenant;
 
 import com.svincent7.sentraiam.common.dto.tenant.TenantRequest;
 import com.svincent7.sentraiam.common.dto.tenant.TenantResponse;
+import com.svincent7.sentraiam.common.exception.ResourceNotFoundException;
 import com.svincent7.sentraiam.common.service.BaseMapper;
 import com.svincent7.sentraiam.identity.model.TenantEntity;
 import com.svincent7.sentraiam.identity.repository.TenantRepository;
@@ -24,5 +25,12 @@ public class TenantServiceImpl extends TenantService {
     @Override
     protected BaseMapper<TenantEntity, TenantRequest, TenantResponse> getMapper() {
         return tenantMapper;
+    }
+
+    @Override
+    public TenantResponse getTenantByName(final String tenantName) {
+        TenantEntity tenant = tenantRepository.findByTenantName(tenantName)
+                .orElseThrow(() -> new ResourceNotFoundException("Resource Not Found: " + tenantName));
+        return getMapper().toResponseDTO(tenant);
     }
 }

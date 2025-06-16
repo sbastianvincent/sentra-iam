@@ -2,6 +2,7 @@ package com.svincent7.sentraiam.identity.service.user;
 
 import com.svincent7.sentraiam.common.dto.user.UserRequest;
 import com.svincent7.sentraiam.common.dto.user.UserResponse;
+import com.svincent7.sentraiam.common.exception.ResourceNotFoundException;
 import com.svincent7.sentraiam.common.service.BaseMapper;
 import com.svincent7.sentraiam.identity.model.UserEntity;
 import com.svincent7.sentraiam.identity.repository.UserRepository;
@@ -24,5 +25,13 @@ public class UserServiceImpl extends UserService {
     @Override
     protected BaseMapper<UserEntity, UserRequest, UserResponse> getMapper() {
         return userMapper;
+    }
+
+    @Override
+    public UserResponse getByUsernameAndTenantId(final String username, final String tenantId) {
+        UserEntity user = userRepository.getByUsernameAndTenantId(username, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Resource Not Found: " + username
+                        + " with tenantId: " + tenantId));
+        return getMapper().toResponseDTO(user);
     }
 }

@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-@Table(name = "credentials", uniqueConstraints = {@UniqueConstraint(columnNames = {"identifier", "type"})})
+@Table(name = "credentials", uniqueConstraints = {@UniqueConstraint(columnNames = {"identifier", "type", "user_id"})})
 public class CredentialEntity extends BaseEntity {
 
     @Id
@@ -36,7 +36,7 @@ public class CredentialEntity extends BaseEntity {
     @Column(name = "user_id", insertable = false, updatable = false, columnDefinition = "varchar(36)")
     private String userId;
 
-    @Column(name = "identifier", unique = true, nullable = false, columnDefinition = "varchar(255)")
+    @Column(name = "identifier", nullable = false, columnDefinition = "varchar(255)")
     private String identifier;
 
     @Column(name = "secret_data", nullable = false, columnDefinition = "TEXT")
