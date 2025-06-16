@@ -7,4 +7,5 @@ import com.svincent7.sentraiam.identity.model.TenantEntity;
 
 public abstract class TenantService extends BaseService<TenantEntity, TenantRequest, TenantResponse, String> {
     public abstract TenantResponse getTenantByName(String tenantName);
+    public abstract void saveTenant(TenantEntity tenantEntity);
 }

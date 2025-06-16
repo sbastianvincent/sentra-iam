@@ -100,6 +100,17 @@ public class CredentialServiceImpl extends CredentialService {
         return verifyCredentialResponse;
     }
 
+    @Override
+    public CredentialResponse findByUserIdAndIdentifierAndType(final String userId,
+                                                                     final String username,
+                                                                     final CredentialType credentialType) {
+        CredentialEntity credentialEntity = credentialRepository.findByUserIdAndIdentifierAndType(
+                userId, username, credentialType).orElseThrow(
+                        () -> new ResourceNotFoundException("Resource with User ID: " + userId + ", username: "
+                                + username + " and credentialType: " + credentialType + " is not found"));
+        return getMapper().toResponseDTO(credentialEntity);
+    }
+
     private VerifyCredentialResponse returnResponseWithStatus(final VerifyCredentialStatus status) {
         VerifyCredentialResponse verifyCredentialResponse = new VerifyCredentialResponse();
         verifyCredentialResponse.setStatus(status);

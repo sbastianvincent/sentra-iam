@@ -106,7 +106,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Authentication authenticate(final String token) {
+    public UserResponse authenticate(final String token) {
         JSONObject payload = parsePayloadFromToken(token);
         String keyId = payload.getString(Claims.ID);
         JwtKey jwtKey = jwtKeyService.getResourceById(keyId);

@@ -33,4 +33,9 @@ public class TenantServiceImpl extends TenantService {
                 .orElseThrow(() -> new ResourceNotFoundException("Resource Not Found: " + tenantName));
         return getMapper().toResponseDTO(tenant);
     }
+
+    @Override
+    public void saveTenant(final TenantEntity tenantEntity) {
+        getRepository().save(tenantEntity);
+    }
 }

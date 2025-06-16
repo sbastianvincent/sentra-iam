@@ -19,18 +19,24 @@ public class UserResponse implements Authentication {
     private String lastName;
     private boolean enabled;
     private String tenantId;
-    private boolean isAuthenticated;
     private int version;
+    private boolean isAuthenticated;
+    private int expiration;
 
     public static UserResponse fromClaimsAndPayload(final Claims claims, final JSONObject payload) {
         UserResponse userResponse = new UserResponse();
         userResponse.setId(claims.getSubject());
         userResponse.setUsername(payload.getString(TokenConstant.USERNAME));
-        userResponse.setFirstName(payload.getString(TokenConstant.FIRSTNAME));
-        userResponse.setLastName(payload.getString(TokenConstant.LASTNAME));
+        if (!payload.isNull(TokenConstant.FIRSTNAME)) {
+            userResponse.setFirstName(payload.getString(TokenConstant.FIRSTNAME));
+        }
+        if (!payload.isNull(TokenConstant.LASTNAME)) {
+            userResponse.setLastName(payload.getString(TokenConstant.LASTNAME));
+        }
         userResponse.setEnabled(true);
         userResponse.setTenantId(claims.getIssuer());
         userResponse.setAuthenticated(true);
+        userResponse.setExpiration(payload.getInt(Claims.EXPIRATION));
         userResponse.setVersion(payload.getInt(TokenConstant.VERSION));
         return userResponse;
     }
