@@ -49,7 +49,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public LoginResponse refresh(final RefreshRequest request) {
         RefreshToken refreshToken = tokenService.getResourceByRefreshToken(request.getRefreshToken());
-        ResponseEntity<UserResponse> response = sentraIamIdentityClient.getUser(refreshToken.getUserId());
+        ResponseEntity<UserResponse> response = sentraIamIdentityClient.getUser(
+                authTokenProvider.getProviderAuthToken(), refreshToken.getUserId());
         UserResponse user = response.getBody();
 
         if (user == null) {

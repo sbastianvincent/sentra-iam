@@ -20,7 +20,9 @@ public enum Permission {
     USERS_UPDATE("users:update", true),
     USERS_DELETE("users:delete", true),
 
+    CREDENTIALS_GET("credentials:get", true),
     CREDENTIALS_CREATE("credentials:create", true),
+    CREDENTIALS_UPDATE("credentials:update", true),
     CREDENTIALS_DELETE("credentials:delete", true);
 
     private final String permission;

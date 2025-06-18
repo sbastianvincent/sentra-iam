@@ -36,14 +36,4 @@ public class CredentialController extends BaseController<CredentialEntity, Crede
     protected void verifyGetAll() {
         returnURINotFound();
     }
-
-    @Override
-    protected void verifyGetById(final String id) {
-        returnURINotFound();
-    }
-
-    @Override
-    protected void verifyUpdate(final String id, final CredentialRequest request) {
-        returnURINotFound();
-    }
 }

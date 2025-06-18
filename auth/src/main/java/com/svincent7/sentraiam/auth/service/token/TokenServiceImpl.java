@@ -8,6 +8,7 @@ import com.svincent7.sentraiam.auth.repository.RefreshTokenRepository;
 import com.svincent7.sentraiam.auth.service.jwtkey.JwtKeyResponse;
 import com.svincent7.sentraiam.auth.service.jwtkey.JwtKeyService;
 import com.svincent7.sentraiam.common.auth.token.SentraClaims;
+import com.svincent7.sentraiam.common.auth.token.TokenUtils;
 import com.svincent7.sentraiam.common.dto.credential.TokenConstant;
 import com.svincent7.sentraiam.common.dto.user.UserResponse;
 import com.svincent7.sentraiam.common.exception.BadRequestException;
@@ -21,11 +22,10 @@ import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -46,7 +46,8 @@ public class TokenServiceImpl implements TokenService {
         Map<String, Object> additionalData = getExtractAdditionalMapData(userResponse);
 
         CreateTokenRequest createTokenRequest = new CreateTokenRequest();
-        createTokenRequest.setId(jwtKey.getId());
+        createTokenRequest.setId(UUID.randomUUID().toString());
+        createTokenRequest.setKeyId(jwtKey.getId());
         createTokenRequest.setSubject(userResponse.getId());
         createTokenRequest.setIssuer(userResponse.getTenantId());
         createTokenRequest.setIssuedAt(currentTime);
@@ -103,18 +104,24 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public SentraClaims authenticate(final String token) {
-        JSONObject payload = parsePayloadFromToken(token);
-        String keyId = payload.getString(Claims.ID);
+        JSONObject header = TokenUtils.parseHeaderFromToken(token);
+        JSONObject payload = TokenUtils.parsePayloadFromToken(token);
+        String tenantId = payload.getString(Claims.ISSUER);
+        String keyId = header.getString(TokenConstant.KEY_ID);
         JwtKey jwtKey = jwtKeyService.getResourceById(keyId);
         log.debug("authenticate::jwtKey {}", jwtKey);
         if (jwtKey.isExpired()) {
             throw new UnauthorizedException("JWT Key expired. Please refresh your token");
         }
+
+        if (!jwtKey.getTenantId().equals(tenantId)) {
+            throw new UnauthorizedException("Invalid Issuer");
+        }
         try {
             Claims claims = Jwts.parser().setSigningKey(jwtKey.getKeyValue()).parseClaimsJws(token).getBody();
             SentraClaims sentraClaims = new SentraClaims(claims, payload);
+
             log.debug("authenticate::sentraClaims {}", sentraClaims);
-//            return UserResponse.fromClaimsAndPayload(claims, payload);
             return sentraClaims;
         } catch (Exception e) {
             log.error("Got Exception when parsing claims: ", e);
@@ -133,30 +140,5 @@ public class TokenServiceImpl implements TokenService {
         }
         additionalData.put(TokenConstant.VERSION, userResponse.getVersion());
         return additionalData;
-    }
-
-    private JSONObject parsePayloadFromToken(final String token) throws UnauthorizedException {
-        String[] parts = token.split("\\.");
-        if (parts.length != TokenConstant.TOTAL_TOKEN_INDEX) {
-            throw new UnauthorizedException("Invalid Access Token");
-        }
-
-        JSONObject payload = new JSONObject(decode(parts[TokenConstant.TOKEN_PAYLOAD_INDEX]));
-        int expiration = payload.getInt(Claims.EXPIRATION);
-        String tenantId = payload.getString(Claims.ISSUER);
-
-        if (tenantId == null || expiration == 0) {
-            throw new UnauthorizedException("Invalid Access Token");
-        }
-
-        if (Instant.ofEpochSecond(expiration).isBefore(Instant.now())) {
-            throw new UnauthorizedException("Token is expired");
-        }
-
-        return payload;
-    }
-
-    private String decode(final String encodedString) {
-        return new String(Base64.getUrlDecoder().decode(encodedString));
     }
 }
