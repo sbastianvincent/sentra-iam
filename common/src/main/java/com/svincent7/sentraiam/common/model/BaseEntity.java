@@ -23,6 +23,9 @@ public abstract class BaseEntity implements Serializable {
     @Column(name = "updated_timestamp", nullable = false)
     private Long updatedTimestamp;
 
+    @Column(nullable = false, columnDefinition = "integer default 1")
+    private int version;
+
     @PrePersist
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();
@@ -32,12 +35,16 @@ public abstract class BaseEntity implements Serializable {
         if (this.updatedTimestamp == null) {
             updatedTimestamp = System.currentTimeMillis();
         }
+        if (this.version == 0) {
+            version = 1;
+        }
         entityPersist();
     }
 
     @PreUpdate
     public void preUpdate() {
         this.updatedTimestamp = System.currentTimeMillis();
+        version++;
         entityUpdate();
     }
 

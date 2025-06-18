@@ -27,7 +27,6 @@ public abstract class TenantMapper implements BaseMapper<TenantEntity, TenantReq
         TenantEntity tenant = new TenantEntity();
         tenant.setId(UUID.randomUUID().toString());
         tenant.setTenantName(request.getTenantName());
-        tenant.setVersion(1);
         updateEntityFromDTO(request, tenant);
 
         return tenant;

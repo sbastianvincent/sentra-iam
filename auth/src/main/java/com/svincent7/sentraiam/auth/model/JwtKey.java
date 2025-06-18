@@ -23,7 +23,7 @@ public class JwtKey extends BaseEntity {
     @Column(name = "id")
     private String id;
 
-    @Column(name = "tenant_id", insertable = false, updatable = false)
+    @Column(name = "tenant_id", nullable = false)
     private String tenantId;
 
     @Column(name = "key_version", nullable = false)

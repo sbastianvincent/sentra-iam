@@ -4,6 +4,7 @@ import com.svincent7.sentraiam.auth.client.SentraIamIdentityClient;
 import com.svincent7.sentraiam.auth.model.AccessToken;
 import com.svincent7.sentraiam.auth.model.RefreshToken;
 import com.svincent7.sentraiam.auth.service.token.TokenService;
+import com.svincent7.sentraiam.common.auth.token.AuthTokenProvider;
 import com.svincent7.sentraiam.common.dto.auth.LoginRequest;
 import com.svincent7.sentraiam.common.dto.auth.LoginResponse;
 import com.svincent7.sentraiam.common.dto.auth.LogoutRequest;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
+    private final AuthTokenProvider authTokenProvider;
     private final SentraIamIdentityClient sentraIamIdentityClient;
     private final TokenService tokenService;
 
@@ -32,7 +34,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new AuthenticationException("Tenant id or Tenant name are required");
         }
 
-        ResponseEntity<VerifyCredentialResponse> response = sentraIamIdentityClient.verifyCredentials(loginRequest);
+        ResponseEntity<VerifyCredentialResponse> response = sentraIamIdentityClient.verifyCredentials(
+                authTokenProvider.getProviderAuthToken(), loginRequest);
         VerifyCredentialResponse credentialResponse = response.getBody();
         if (credentialResponse == null || !credentialResponse.getStatus().equals(VerifyCredentialStatus.SUCCESS)
                 || credentialResponse.getUser() == null) {

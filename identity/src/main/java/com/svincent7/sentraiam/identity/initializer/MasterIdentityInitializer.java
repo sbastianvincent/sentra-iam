@@ -8,7 +8,6 @@ import com.svincent7.sentraiam.common.dto.user.UserResponse;
 import com.svincent7.sentraiam.common.exception.ResourceNotFoundException;
 import com.svincent7.sentraiam.common.initializer.Initializer;
 import com.svincent7.sentraiam.identity.config.IdentityConfig;
-import com.svincent7.sentraiam.identity.config.MasterInitializerConfig;
 import com.svincent7.sentraiam.identity.model.TenantEntity;
 import com.svincent7.sentraiam.identity.service.credential.CredentialService;
 import com.svincent7.sentraiam.identity.service.tenant.TenantService;
@@ -33,7 +32,6 @@ public class MasterIdentityInitializer implements Initializer {
             tenant.setId(identityConfig.getMasterTenantId());
             tenant.setTenantName(identityConfig.getMasterTenantName());
             tenant.setTenantStatus(TenantStatus.ACTIVE);
-            tenant.setVersion(1);
             tenantService.saveTenant(tenant);
         }
 

@@ -7,11 +7,13 @@ import com.svincent7.sentraiam.common.exception.HashingException;
 import com.svincent7.sentraiam.common.exception.InvalidPasswordException;
 import com.svincent7.sentraiam.common.exception.ResourceNotFoundException;
 import com.svincent7.sentraiam.common.exception.UnauthorizedException;
+import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -25,6 +27,7 @@ import java.util.Map;
 @Slf4j
 public abstract class BaseExceptionHandler {
 
+    // 400
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiErrorResponse handleInvalidArgument(final MethodArgumentNotValidException exception,
@@ -51,6 +54,14 @@ public abstract class BaseExceptionHandler {
         return ApiErrorResponse.buildFromException(exception, HttpStatus.BAD_REQUEST, request.getRequestURI());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BadRequestException.class)
+    public ApiErrorResponse handleBadRequestException(final BaseErrorException exception,
+                                                      final HttpServletRequest request) {
+        return ApiErrorResponse.buildFromBaseErrorException(exception, request.getRequestURI());
+    }
+
+    // 401
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
     public ApiErrorResponse handleUnauthorized(final BaseErrorException exception,
@@ -65,6 +76,15 @@ public abstract class BaseExceptionHandler {
         return ApiErrorResponse.buildFromBaseErrorException(exception, request.getRequestURI());
     }
 
+    // 403
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ApiErrorResponse handleAuthorizationDeniedException(final Exception exception,
+                                                               final HttpServletRequest request) {
+        return ApiErrorResponse.buildFromException(exception, HttpStatus.FORBIDDEN, request.getRequestURI());
+    }
+
+    // 404
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ResourceNotFoundException.class)
     public ApiErrorResponse handleResourceNotFoundException(final BaseErrorException exception,
@@ -72,13 +92,7 @@ public abstract class BaseExceptionHandler {
         return ApiErrorResponse.buildFromBaseErrorException(exception, request.getRequestURI());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(BadRequestException.class)
-    public ApiErrorResponse handleBadRequestException(final BaseErrorException exception,
-                                                            final HttpServletRequest request) {
-        return ApiErrorResponse.buildFromBaseErrorException(exception, request.getRequestURI());
-    }
-
+    // 500
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(HashingException.class)
     public ApiErrorResponse handleHashingException(final HashingException exception,
@@ -124,6 +138,26 @@ public abstract class BaseExceptionHandler {
         exception.printStackTrace(pw);
         log.error(buffer.toString());
 
+        return ApiErrorResponse.buildInternalErrorResponse(request.getRequestURI());
+    }
+
+    // FEIGN CLIENT EXCEPTIONS
+
+    // 401
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(FeignException.Unauthorized.class)
+    public ApiErrorResponse handleFeignExceptionUnauthorized(final FeignException exception,
+                                                             final HttpServletRequest request) {
+        String errorTitle = "Feign Client Unauthorized";
+        log.error(errorTitle, exception);
+
+        // print stacktrace
+        Writer buffer = new StringWriter();
+        PrintWriter pw = new PrintWriter(buffer);
+        exception.printStackTrace(pw);
+        log.error(buffer.toString());
+
+        // We treat Feign Client Unauthorized exceptions as internal errors because we make the internal calls
         return ApiErrorResponse.buildInternalErrorResponse(request.getRequestURI());
     }
 }

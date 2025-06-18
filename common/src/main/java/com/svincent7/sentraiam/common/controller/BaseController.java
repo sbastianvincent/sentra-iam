@@ -1,5 +1,6 @@
 package com.svincent7.sentraiam.common.controller;
 
+import com.svincent7.sentraiam.common.exception.URINotFoundException;
 import com.svincent7.sentraiam.common.service.BaseService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -57,5 +58,9 @@ public abstract class BaseController<E, Req, Resp, ID> {
 
     protected void verifyUpdate(final ID id, final Req entity) {
 
+    }
+
+    protected void returnURINotFound() {
+        throw new URINotFoundException("URI not found");
     }
 }

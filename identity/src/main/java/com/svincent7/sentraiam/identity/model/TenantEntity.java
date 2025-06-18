@@ -27,12 +27,4 @@ public class TenantEntity extends BaseEntity {
     @Column(nullable = false, columnDefinition = "varchar(16) default 'ACTIVE'")
     @Enumerated(EnumType.STRING)
     private TenantStatus tenantStatus;
-
-    @Column(nullable = false, columnDefinition = "integer default 1")
-    private int version;
-
-    @Override
-    public void entityUpdate() {
-        version++;
-    }
 }

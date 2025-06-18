@@ -15,24 +15,15 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username", "tenant_id"})})
-public class UserEntity extends BaseEntity {
+@Table(name = "roles", uniqueConstraints = {@UniqueConstraint(columnNames = {"role_name", "tenant_id"})})
+public class RoleEntity extends BaseEntity {
 
     @Id
     @Column(nullable = false, unique = true, columnDefinition = "varchar(36)")
     private String id;
 
-    @Column(name = "username", nullable = false, columnDefinition = "varchar(128)")
-    private String username;
-
-    @Column(name = "first_name", columnDefinition = "varchar(255)")
-    private String firstName;
-
-    @Column(name = "last_name", columnDefinition = "varchar(255)")
-    private String lastName;
-
-    @Column(name = "enabled", nullable = false)
-    private boolean enabled;
+    @Column(name = "role_name", nullable = false, unique = true, columnDefinition = "varchar(128)")
+    private String roleName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tenant_id", nullable = false)

@@ -47,12 +47,4 @@ public class CredentialEntity extends BaseEntity {
 
     @Column(name = "revoked", nullable = false, columnDefinition = "boolean default false")
     private boolean revoked;
-
-    @Column(nullable = false, columnDefinition = "integer default 1")
-    private int version;
-
-    @Override
-    public void entityUpdate() {
-        version++;
-    }
 }

@@ -48,7 +48,6 @@ public class SecurityConfig {
                         .authenticated())
                 .oauth2ResourceServer(oauth2 ->
                         oauth2.opaqueToken(Customizer.withDefaults()));
-
         return serverHttpSecurity.build();
     }
 }

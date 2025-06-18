@@ -31,4 +31,19 @@ public class CredentialController extends BaseController<CredentialEntity, Crede
         VerifyCredentialResponse response = credentialService.verifyCredentials(loginRequest);
         return ResponseEntity.ok(response);
     }
+
+    @Override
+    protected void verifyGetAll() {
+        returnURINotFound();
+    }
+
+    @Override
+    protected void verifyGetById(final String id) {
+        returnURINotFound();
+    }
+
+    @Override
+    protected void verifyUpdate(final String id, final CredentialRequest request) {
+        returnURINotFound();
+    }
 }

@@ -63,6 +63,9 @@ public abstract class CredentialMapper implements BaseMapper<CredentialEntity, C
         credential.setType(request.getType());
         credential.setRevoked(false);
         switch (request.getType()) {
+            // We force the identifier of a password to be user's username
+            // and ignore the value of the username from request,
+            // so that each user can only have a maximum of 1 password
             case PASSWORD:
                 credential.setIdentifier(user.getUsername());
                 break;
@@ -71,7 +74,6 @@ public abstract class CredentialMapper implements BaseMapper<CredentialEntity, C
                 break;
         }
 
-        credential.setVersion(1);
         updateEntityFromDTO(request, credential);
 
         return credential;

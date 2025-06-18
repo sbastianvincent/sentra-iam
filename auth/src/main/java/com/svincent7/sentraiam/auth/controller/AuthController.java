@@ -2,11 +2,15 @@ package com.svincent7.sentraiam.auth.controller;
 
 import com.svincent7.sentraiam.auth.service.AuthenticationService;
 import com.svincent7.sentraiam.auth.service.token.TokenService;
+import com.svincent7.sentraiam.common.auth.token.DefaultAuthTokenProvider;
+import com.svincent7.sentraiam.common.auth.token.SentraClaims;
 import com.svincent7.sentraiam.common.dto.auth.LoginRequest;
 import com.svincent7.sentraiam.common.dto.auth.LoginResponse;
 import com.svincent7.sentraiam.common.dto.auth.LogoutRequest;
 import com.svincent7.sentraiam.common.dto.auth.RefreshRequest;
-import com.svincent7.sentraiam.common.dto.user.UserResponse;
+import com.svincent7.sentraiam.common.dto.credential.TokenConstant;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.impl.DefaultClaims;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,30 +54,30 @@ public class AuthController {
     }
 
     @PostMapping(path = "/introspect", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-    public ResponseEntity<Map<String, Object>> introspect(final @RequestParam MultiValueMap<String, String> body) {
+    public ResponseEntity<Claims> introspect(final @RequestParam MultiValueMap<String, String> body) {
         String token = body.getFirst(TOKEN);
         return ResponseEntity.ok(getToken(token));
     }
 
-    private Map<String, Object> getToken(final String token) {
-        Map<String, Object> response = new HashMap<>();
+    private Claims getToken(final String token) {
         if (StringUtils.isEmpty(token)) {
             log.warn("Validate Token error: Token is empty");
-            response.put("active", false);
+            return new DefaultClaims();
+        }
+
+        // Temporary: Update when we have a mechanism to validate inter-service requests (mTLS)
+        log.debug("token: {}", token);
+        if (token.equals(DefaultAuthTokenProvider.TEMP_SERVICE_ACCOUNT_AUTH_TOKEN)) {
+            Claims response = new SentraClaims();
+            long expirationTime = System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1);
+            response.put(TokenConstant.ACTIVE, true);
+            response.put("sub", "12345");
+            response.put("username", "service-account");
+            response.put("exp", expirationTime);
+            response.put("iss", "master-tenant-id");
             return response;
         }
 
-        try {
-            UserResponse authentication = tokenService.authenticate(token);
-            response.put("active", true);
-            response.put("sub", authentication.getId());
-            response.put("username", authentication.getUsername());
-            response.put("exp", authentication.getExpiration());
-            response.put("iss", authentication.getTenantId());
-        } catch (Exception e) {
-            log.warn("Validate Token error: {}", e.getMessage());
-            response.put("active", false);
-        }
-        return response;
+        return tokenService.authenticate(token);
     }
 }

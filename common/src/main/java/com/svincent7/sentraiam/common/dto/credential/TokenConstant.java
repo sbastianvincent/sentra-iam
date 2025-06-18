@@ -5,6 +5,7 @@ public final class TokenConstant {
 
     }
 
+    public static final String ACTIVE = "active";
     public static final String USERNAME = "username";
     public static final String FIRSTNAME = "firstname";
     public static final String LASTNAME = "lastname";

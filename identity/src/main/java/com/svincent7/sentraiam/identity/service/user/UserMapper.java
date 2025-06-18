@@ -41,7 +41,6 @@ public abstract class UserMapper implements BaseMapper<UserEntity, UserRequest, 
         user.setUsername(request.getUsername());
         user.setTenant(tenant);
         user.setTenantId(request.getTenantId());
-        user.setVersion(1);
         updateEntityFromDTO(request, user);
 
         return user;

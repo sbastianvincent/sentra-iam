@@ -7,6 +7,7 @@ import com.svincent7.sentraiam.auth.model.RefreshToken;
 import com.svincent7.sentraiam.auth.repository.RefreshTokenRepository;
 import com.svincent7.sentraiam.auth.service.jwtkey.JwtKeyResponse;
 import com.svincent7.sentraiam.auth.service.jwtkey.JwtKeyService;
+import com.svincent7.sentraiam.common.auth.token.SentraClaims;
 import com.svincent7.sentraiam.common.dto.credential.TokenConstant;
 import com.svincent7.sentraiam.common.dto.user.UserResponse;
 import com.svincent7.sentraiam.common.exception.BadRequestException;
@@ -16,9 +17,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -43,11 +43,7 @@ public class TokenServiceImpl implements TokenService {
         long expirationTime = currentTime + TimeUnit.MINUTES.toMillis(config.getTokenExpirationMinutes());
         JwtKeyResponse jwtKey = jwtKeyService.getTenantActiveJwtKey(userResponse.getTenantId());
 
-        Map<String, Object> additionalData = new HashMap<>();
-        additionalData.put(TokenConstant.USERNAME, userResponse.getUsername());
-        additionalData.put(TokenConstant.FIRSTNAME, userResponse.getFirstName());
-        additionalData.put(TokenConstant.LASTNAME, userResponse.getLastName());
-        additionalData.put(TokenConstant.VERSION, userResponse.getVersion());
+        Map<String, Object> additionalData = getExtractAdditionalMapData(userResponse);
 
         CreateTokenRequest createTokenRequest = new CreateTokenRequest();
         createTokenRequest.setId(jwtKey.getId());
@@ -106,7 +102,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public UserResponse authenticate(final String token) {
+    public SentraClaims authenticate(final String token) {
         JSONObject payload = parsePayloadFromToken(token);
         String keyId = payload.getString(Claims.ID);
         JwtKey jwtKey = jwtKeyService.getResourceById(keyId);
@@ -116,23 +112,27 @@ public class TokenServiceImpl implements TokenService {
         }
         try {
             Claims claims = Jwts.parser().setSigningKey(jwtKey.getKeyValue()).parseClaimsJws(token).getBody();
-            log.debug("authenticate::claims {}", claims);
-            return UserResponse.fromClaimsAndPayload(claims, payload);
+            SentraClaims sentraClaims = new SentraClaims(claims, payload);
+            log.debug("authenticate::sentraClaims {}", sentraClaims);
+//            return UserResponse.fromClaimsAndPayload(claims, payload);
+            return sentraClaims;
         } catch (Exception e) {
             log.error("Got Exception when parsing claims: ", e);
             throw new UnauthorizedException("Invalid Token Signature");
         }
     }
 
-    @Override
-    public void claimAccessToken(final String token) {
-        try {
-            Authentication authentication = authenticate(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (Exception e) {
-            log.error("Got Exception when parsing claims: ", e);
-            throw new UnauthorizedException("Invalid Token Signature");
+    private Map<String, Object> getExtractAdditionalMapData(final UserResponse userResponse) {
+        Map<String, Object> additionalData = new HashMap<>();
+        additionalData.put(TokenConstant.USERNAME, userResponse.getUsername());
+        if (!StringUtils.isEmpty(userResponse.getFirstName())) {
+            additionalData.put(TokenConstant.FIRSTNAME, userResponse.getFirstName());
         }
+        if (!StringUtils.isEmpty(userResponse.getLastName())) {
+            additionalData.put(TokenConstant.LASTNAME, userResponse.getLastName());
+        }
+        additionalData.put(TokenConstant.VERSION, userResponse.getVersion());
+        return additionalData;
     }
 
     private JSONObject parsePayloadFromToken(final String token) throws UnauthorizedException {
