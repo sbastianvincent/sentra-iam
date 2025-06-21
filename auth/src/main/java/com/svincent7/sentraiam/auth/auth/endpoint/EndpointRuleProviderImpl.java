@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class EndpointRuleProviderImpl implements EndpointRuleProvider {
@@ -15,7 +16,9 @@ public class EndpointRuleProviderImpl implements EndpointRuleProvider {
     public List<EndpointRule> getEndpointRules() {
         return List.of(
             new EndpointRule(HttpMethod.POST, "/api/auth/v1/introspect",
-                        EndpointRuleProvider.SCOPE_PREFIX + Permission.TOKEN_INTROSPECT.getPermission())
+                        Set.of(
+                                EndpointRuleProvider.SCOPE_PREFIX + Permission.TOKEN_INTROSPECT.getPermission()
+                        ))
         );
     }
 

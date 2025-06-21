@@ -1,5 +1,6 @@
 package com.svincent7.sentraiam.identity.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -34,9 +35,17 @@ public class RolePermissionMapping implements Serializable {
     @JoinColumn(name = "permission_id")
     private PermissionEntity permission;
 
+    @Column(name = "role_id", insertable = false, updatable = false)
+    private String roleId;
+
+    @Column(name = "permission_id", insertable = false, updatable = false)
+    private String permissionId;
+
     public RolePermissionMapping(final RoleEntity roleInput, final PermissionEntity permissionInput) {
         this.role = roleInput;
         this.permission = permissionInput;
         this.rolePermissionKey = new RolePermissionKey(role.getId(), permission.getId());
+        this.roleId = role.getId();
+        this.permissionId = permission.getId();
     }
 }

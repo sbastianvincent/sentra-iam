@@ -9,6 +9,15 @@ import java.util.Map;
 public enum Permission {
     TOKEN_INTROSPECT("token:introspect", false),
 
+    PERMISSIONS_GET_ALL("permissions:get-all", false),
+    PERMISSIONS_LIST("permissions:list", true),
+
+    ROLES_LIST("roles:list", true),
+    ROLES_GET("roles:get", true),
+    ROLES_CREATE("roles:create", true),
+    ROLES_UPDATE("roles:update", true),
+    ROLES_DELETE("roles:delete", true),
+
     TENANTS_LIST("tenants:list", false),
     TENANTS_GET("tenants:get", false),
     TENANTS_CREATE("tenants:create", false),

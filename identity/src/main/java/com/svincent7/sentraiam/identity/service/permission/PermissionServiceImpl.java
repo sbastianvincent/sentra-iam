@@ -1,17 +1,20 @@
 package com.svincent7.sentraiam.identity.service.permission;
 
+import com.svincent7.sentraiam.common.dto.permission.PermissionResponse;
 import com.svincent7.sentraiam.common.exception.ResourceNotFoundException;
 import com.svincent7.sentraiam.identity.model.PermissionEntity;
 import com.svincent7.sentraiam.identity.repository.PermissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class PermissionServiceImpl implements PermissionService {
     private final PermissionRepository permissionRepository;
+    private final PermissionMapper permissionMapper;
 
     @Override
     public PermissionEntity getPermissionByName(final String permission) {
@@ -32,5 +35,17 @@ public class PermissionServiceImpl implements PermissionService {
         permissionEntity.setPermission(permission);
         permissionEntity.setUserVisible(userVisible);
         return permissionRepository.save(permissionEntity);
+    }
+
+    @Override
+    public List<PermissionResponse> getPermissions() {
+        List<PermissionEntity> permissions = permissionRepository.findAll();
+        return permissions.stream().map(permissionMapper::toResponseDTO).toList();
+    }
+
+    @Override
+    public List<PermissionResponse> getPermissionsUserVisible() {
+        List<PermissionEntity> permissions = permissionRepository.findByUserVisible(true);
+        return permissions.stream().map(permissionMapper::toResponseDTO).toList();
     }
 }

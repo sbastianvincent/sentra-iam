@@ -34,9 +34,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(endpointRuleProvider.getPermittedEndpoints()).permitAll();
                     for (EndpointRule rule : endpointRuleProvider.getEndpointRules()) {
-                        auth.requestMatchers(rule.method(), rule.path()).hasAuthority(rule.authority());
+                        auth.requestMatchers(rule.method(), rule.path()).hasAnyRole(
+                                rule.authority().toArray(new String[0]));
                     }
-                    auth.anyRequest().authenticated();
+                    auth.anyRequest().denyAll();
                 })
                 .httpBasic(Customizer.withDefaults());
 

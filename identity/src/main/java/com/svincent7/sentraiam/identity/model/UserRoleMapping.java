@@ -1,5 +1,6 @@
 package com.svincent7.sentraiam.identity.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -34,9 +35,17 @@ public class UserRoleMapping implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private RoleEntity role;
 
+    @Column(name = "user_id", insertable = false, updatable = false)
+    private String userId;
+
+    @Column(name = "role_id", insertable = false, updatable = false)
+    private String roleId;
+
     public UserRoleMapping(final UserEntity userInput, final RoleEntity roleInput) {
         this.user = userInput;
         this.role = roleInput;
         this.userRoleKey = new UserRoleKey(user.getId(), role.getId());
+        this.userId = user.getId();
+        this.roleId = role.getId();
     }
 }
