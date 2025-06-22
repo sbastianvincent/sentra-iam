@@ -19,6 +19,7 @@
 	</properties>
 
 	<modules>
+		<module>pki</module>
 		<module>discovery</module>
 		<module>apigateway</module>
 	</modules>

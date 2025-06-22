@@ -1,5 +1,6 @@
 package com.svincent7.sentraiam.discovery;
 
+import com.svincent7.sentraiam.common.initializer.CsrBootstrapInitializer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
@@ -8,6 +9,8 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 @EnableEurekaServer
 public class SentraIamDiscoveryApplication {
     public static void main(final String[] args) {
-        SpringApplication.run(SentraIamDiscoveryApplication.class, args);
+        SpringApplication app = new SpringApplication(SentraIamDiscoveryApplication.class);
+        app.addInitializers(new CsrBootstrapInitializer());
+        app.run(args);
     }
 }
