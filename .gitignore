@@ -33,3 +33,5 @@ build/
 .vscode/
 
 *.p12
+*.crt
+*.pem

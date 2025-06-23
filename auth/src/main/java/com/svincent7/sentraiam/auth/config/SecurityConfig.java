@@ -2,9 +2,13 @@ package com.svincent7.sentraiam.auth.config;
 
 import com.svincent7.sentraiam.common.auth.endpoint.EndpointRule;
 import com.svincent7.sentraiam.common.auth.endpoint.EndpointRuleProvider;
+import com.svincent7.sentraiam.common.cert.SSLBundleEurekaClientHttpRequestFactorySupplier;
+import com.svincent7.sentraiam.common.config.ConfigProperties;
 import com.svincent7.sentraiam.common.permission.Permission;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.ssl.SslBundles;
+import org.springframework.cloud.netflix.eureka.http.EurekaClientHttpRequestFactorySupplier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -53,6 +57,12 @@ public class SecurityConfig {
                 .build();
 
         return new InMemoryUserDetailsManager(gateway);
+    }
+
+    @Bean
+    public EurekaClientHttpRequestFactorySupplier eurekaClientHttpRequestFactorySupplier(final ConfigProperties config,
+                                                                                         final SslBundles sslBundles) {
+        return new SSLBundleEurekaClientHttpRequestFactorySupplier(config, sslBundles);
     }
 
 }

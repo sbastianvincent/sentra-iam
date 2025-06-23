@@ -1,6 +1,5 @@
 package com.svincent7.sentraiam.pki.service;
 
-import com.svincent7.sentraiam.common.cert.CsrUtil;
 import com.svincent7.sentraiam.pki.config.PkiConfig;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;

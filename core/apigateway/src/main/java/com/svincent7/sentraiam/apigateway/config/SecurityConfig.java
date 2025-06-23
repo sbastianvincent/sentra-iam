@@ -1,5 +1,12 @@
 package com.svincent7.sentraiam.apigateway.config;
 
+import com.svincent7.sentraiam.common.cert.SSLBundleEurekaClientHttpRequestFactorySupplier;
+import com.svincent7.sentraiam.common.config.ConfigProperties;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import org.springframework.boot.ssl.SslBundle;
+import org.springframework.boot.ssl.SslBundles;
+import org.springframework.cloud.netflix.eureka.http.EurekaClientHttpRequestFactorySupplier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -9,7 +16,9 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import reactor.netty.http.client.HttpClient;
 
+import javax.net.ssl.SSLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,5 +58,28 @@ public class SecurityConfig {
                 .oauth2ResourceServer(oauth2 ->
                         oauth2.opaqueToken(Customizer.withDefaults()));
         return serverHttpSecurity.build();
+    }
+
+    @Bean
+    public EurekaClientHttpRequestFactorySupplier eurekaClientHttpRequestFactorySupplier(final ConfigProperties config,
+                                                                                         final SslBundles sslBundles) {
+        return new SSLBundleEurekaClientHttpRequestFactorySupplier(config, sslBundles);
+    }
+
+    @Bean
+    public HttpClient httpClient(final ConfigProperties config, final SslBundles sslBundles) {
+        SslBundle sslBundle = sslBundles.getBundle(config.getSslBundleName());
+        SslContextBuilder sslContextBuilder = SslContextBuilder.forClient()
+                .keyManager(sslBundle.getManagers().getKeyManagerFactory())
+                .trustManager(sslBundle.getManagers().getTrustManagerFactory());
+
+        SslContext sslContext;
+        try {
+            sslContext = sslContextBuilder.build();
+        } catch (SSLException e) {
+            throw new IllegalStateException("Failed to build SSL context", e);
+        }
+
+        return HttpClient.create().secure(sslContextSpec -> sslContextSpec.sslContext(sslContext));
     }
 }

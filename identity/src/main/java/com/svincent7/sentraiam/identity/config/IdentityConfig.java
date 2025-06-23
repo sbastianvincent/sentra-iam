@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Data
 public class IdentityConfig implements ConfigProperties {
     private boolean shouldRunInitializer;
+    private String sslBundleName;
 
     private String masterTenantId;
     private String masterTenantName;

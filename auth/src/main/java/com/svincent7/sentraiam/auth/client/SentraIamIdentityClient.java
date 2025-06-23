@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(name = "sentra-iam-identity")
+@FeignClient(name = "sentra-iam-identity", configuration = FeignClientConfig.class)
 public interface SentraIamIdentityClient extends IdentityClient {
 
     @RequestMapping(value = "/api/identity/v1/credentials/verify", method = RequestMethod.POST)
