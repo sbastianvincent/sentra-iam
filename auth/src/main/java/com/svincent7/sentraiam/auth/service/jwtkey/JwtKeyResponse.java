@@ -8,7 +8,8 @@ public class JwtKeyResponse {
     private String id;
     private String tenantId;
     private String keyVersion;
-    private String keyValue;
+    private String privateKey;
+    private String publicKey;
     private KeyAlgorithm keyAlgorithm;
     private long createdTimestamp;
     private long expiredTimestamp;

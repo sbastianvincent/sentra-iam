@@ -22,7 +22,7 @@ public class JwtTokenGenerator implements TokenGenerator {
                 .setExpiration(Date.from(Instant.ofEpochMilli(createTokenRequest.getExpiration())))
                 .setIssuer(createTokenRequest.getIssuer())
                 .addClaims(createTokenRequest.getAdditionalData())
-                .signWith(createTokenRequest.getSignatureAlgorithm(), createTokenRequest.getSecret())
+                .signWith(createTokenRequest.getSignatureAlgorithm(), createTokenRequest.getPrivateKey())
                 .compact();
     }
 }

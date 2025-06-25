@@ -15,7 +15,6 @@ public final class CachedLoggerConstant {
     public static final Set<String> EXCLUDED_RESPONSE_PATHS = new HashSet<>(
             Arrays.asList(
                     "/actuator/prometheus",
-                    "/actuator/metrics",
-                    "/api/auth/v1/introspect"
+                    "/actuator/metrics"
             ));
 }

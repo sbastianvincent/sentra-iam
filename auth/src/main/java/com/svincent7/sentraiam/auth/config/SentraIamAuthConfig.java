@@ -1,5 +1,6 @@
 package com.svincent7.sentraiam.auth.config;
 
+import com.svincent7.sentraiam.auth.model.KeyAlgorithm;
 import com.svincent7.sentraiam.common.config.ConfigProperties;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,6 +16,8 @@ public class SentraIamAuthConfig implements ConfigProperties {
     private int tokenExpirationMinutes;
     private int jwtKeyRotationHours;
     private int refreshTokenExpirationDays;
-    private String defaultKeyAlgorithm;
-    private int secretKeyDefaultLength;
+    private String jwtDefaultKeyPairAlgorithm;
+    private KeyAlgorithm jwtDefaultKeyAlgorithm;
+    private int jwtDefaultKeyLength;
+    private String openidConfigurationUri;
 }

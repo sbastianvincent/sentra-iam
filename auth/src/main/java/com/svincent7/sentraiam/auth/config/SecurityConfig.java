@@ -4,7 +4,6 @@ import com.svincent7.sentraiam.common.auth.endpoint.EndpointRule;
 import com.svincent7.sentraiam.common.auth.endpoint.EndpointRuleProvider;
 import com.svincent7.sentraiam.common.cert.SSLBundleEurekaClientHttpRequestFactorySupplier;
 import com.svincent7.sentraiam.common.config.ConfigProperties;
-import com.svincent7.sentraiam.common.permission.Permission;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ssl.SslBundles;
@@ -16,10 +15,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -42,23 +37,9 @@ public class SecurityConfig {
                                 rule.authority().toArray(new String[0]));
                     }
                     auth.anyRequest().denyAll();
-                })
-                .x509(x509 -> {
-                    x509.subjectPrincipalRegex("CN=(.*?)(?:,|$)").userDetailsService(userDetailsService());
                 });
 
         return httpSecurity.build();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails gateway = User.builder()
-                .username("sentra-iam-apigateway")
-                .password("noop-password")
-                .authorities(EndpointRuleProvider.SCOPE_PREFIX + Permission.TOKEN_INTROSPECT.getPermission())
-                .build();
-
-        return new InMemoryUserDetailsManager(gateway);
     }
 
     @Bean

@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 @Slf4j
@@ -37,6 +39,14 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         if (LIST_URL_WITHOUT_AUTHENTICATION.contains(request.getRequestURI())) {
             filterChain.doFilter(request, response);
             return;
+        }
+
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            Enumeration<String> values = request.getHeaders(name);
+            List<String> valueList = Collections.list(values);
+            log.debug("AuthenticationFilter::header '{}': {}", name, valueList);
         }
 
         String headerAuth = request.getHeader(HEADER_AUTHENTICATION);

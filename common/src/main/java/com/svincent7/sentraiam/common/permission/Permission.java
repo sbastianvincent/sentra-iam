@@ -7,8 +7,6 @@ import java.util.Map;
 
 @Getter
 public enum Permission {
-    TOKEN_INTROSPECT("token:introspect", false),
-
     PERMISSIONS_GET_ALL("permissions:get-all", false),
     PERMISSIONS_LIST("permissions:list", true),
 

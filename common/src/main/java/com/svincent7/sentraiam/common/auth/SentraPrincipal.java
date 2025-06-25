@@ -36,7 +36,7 @@ public class SentraPrincipal implements Authentication {
         JSONObject payload = TokenUtils.parsePayloadFromToken(token);
         String username = payload.getString(TokenConstant.USERNAME);
         String userId = payload.getString(Claims.SUBJECT);
-        String tenantId = payload.getString(Claims.ISSUER);
+        String tenantId = payload.getString(TokenConstant.TENANT_ID);
         return new SentraPrincipal(tenantId, userId, username, true);
     }
 

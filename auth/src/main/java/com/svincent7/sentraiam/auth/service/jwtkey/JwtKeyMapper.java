@@ -1,7 +1,6 @@
 package com.svincent7.sentraiam.auth.service.jwtkey;
 
 import com.svincent7.sentraiam.auth.model.JwtKey;
-import com.svincent7.sentraiam.auth.model.KeyAlgorithm;
 import com.svincent7.sentraiam.common.service.BaseMapper;
 import lombok.Getter;
 import org.mapstruct.Mapper;
@@ -13,8 +12,10 @@ public abstract class JwtKeyMapper implements BaseMapper<JwtKey, JwtKeyRequest, 
     @Override
     public void updateEntityFromDTO(final JwtKeyRequest request, final JwtKey entity) {
         entity.setKeyVersion(request.getKeyVersion());
-        entity.setKeyValue(request.getKeyValue());
-        entity.setKeyAlgorithm(KeyAlgorithm.valueOf(request.getKeyAlgorithm()));
+        entity.setPrivateKey(request.getPrivateKey());
+        entity.setPublicKey(request.getPublicKey());
+        entity.setKeyAlgorithm(request.getKeyAlgorithm());
+        entity.setKeyLength(request.getKeyLength());
         entity.setExpiredTimestamp(request.getExpiredTimestamp());
     }
 

@@ -1,9 +1,13 @@
 package com.svincent7.sentraiam.auth.service;
 
 import com.svincent7.sentraiam.auth.client.SentraIamIdentityClient;
+import com.svincent7.sentraiam.auth.config.SentraIamAuthConfig;
 import com.svincent7.sentraiam.auth.model.AccessToken;
 import com.svincent7.sentraiam.auth.model.RefreshToken;
+import com.svincent7.sentraiam.auth.service.jwtkey.JwtKeyResponse;
+import com.svincent7.sentraiam.auth.service.jwtkey.JwtKeyService;
 import com.svincent7.sentraiam.auth.service.token.TokenService;
+import com.svincent7.sentraiam.common.crypto.CryptoUtil;
 import com.svincent7.sentraiam.common.dto.auth.LoginRequest;
 import com.svincent7.sentraiam.common.dto.auth.LoginResponse;
 import com.svincent7.sentraiam.common.dto.auth.LogoutRequest;
@@ -19,12 +23,19 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.security.interfaces.RSAPublicKey;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final SentraIamIdentityClient sentraIamIdentityClient;
     private final TokenService tokenService;
+    private final JwtKeyService jwtKeyService;
+    private final SentraIamAuthConfig config;
 
     @Override
     public LoginResponse authenticate(final LoginRequest loginRequest) {
@@ -62,6 +73,25 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public void logout(final LogoutRequest logoutRequest) {
         tokenService.expireRefreshToken(logoutRequest.getRefreshToken());
+    }
+
+    @Override
+    public List<Object> getJwks(String tenantId) {
+        JwtKeyResponse jwtKeyResponse = jwtKeyService.getTenantActiveJwtKey(tenantId);
+        RSAPublicKey publicKey = (RSAPublicKey) CryptoUtil.loadPublicKey(config.getJwtDefaultKeyPairAlgorithm(),
+                jwtKeyResponse.getPublicKey());
+        String n = Base64.getUrlEncoder().withoutPadding().encodeToString(publicKey.getModulus().toByteArray());
+        String e = Base64.getUrlEncoder().withoutPadding().encodeToString(publicKey.getPublicExponent().toByteArray());
+
+        Map<String, Object> jwk = Map.of(
+                "kty", config.getJwtDefaultKeyPairAlgorithm(),
+                "kid", jwtKeyResponse.getId(),
+                "alg", jwtKeyResponse.getKeyAlgorithm().name(),
+                "use", "sig",
+                "n", n,
+                "e", e
+        );
+        return List.of(jwk);
     }
 
     private LoginResponse generateLoginResponse(final UserResponse userResponse) {

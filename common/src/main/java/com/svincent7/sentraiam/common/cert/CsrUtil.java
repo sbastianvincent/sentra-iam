@@ -1,5 +1,6 @@
 package com.svincent7.sentraiam.common.cert;
 
+import com.svincent7.sentraiam.common.crypto.CryptoUtil;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -20,7 +21,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -37,10 +37,8 @@ public final class CsrUtil {
     private CsrUtil() {
     }
 
-    public static KeyPair generateKeyPair() throws Exception {
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance(KEY_ALGORITHM);
-        keyGen.initialize(KEY_LENGTH);
-        return keyGen.generateKeyPair();
+    public static KeyPair generateKeyPair() {
+        return CryptoUtil.generateKeyPair(KEY_ALGORITHM, KEY_LENGTH);
     }
 
     public static PKCS10CertificationRequest createCsr(final KeyPair keyPair, final String subjectDN,

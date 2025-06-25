@@ -3,6 +3,7 @@ package com.svincent7.sentraiam.auth.service.token;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Data;
 
+import java.security.PrivateKey;
 import java.util.Map;
 
 @Data
@@ -15,5 +16,5 @@ public class CreateTokenRequest {
     private long expiration;
     private Map<String, Object> additionalData;
     private SignatureAlgorithm signatureAlgorithm;
-    private String secret;
+    private PrivateKey privateKey;
 }

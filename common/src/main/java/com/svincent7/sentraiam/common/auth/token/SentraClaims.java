@@ -20,6 +20,7 @@ public class SentraClaims extends DefaultClaims implements Claims {
         this.setValue(TokenConstant.ACTIVE, true);
         this.setValue(TokenConstant.USERNAME, jsonObject.getString(TokenConstant.USERNAME));
         this.setValue(TokenConstant.VERSION, jsonObject.getInt(TokenConstant.VERSION));
+        this.setValue(TokenConstant.TENANT_ID, jsonObject.getString(TokenConstant.TENANT_ID));
         if (jsonObject.has(TokenConstant.FIRSTNAME)) {
             this.setValue(TokenConstant.FIRSTNAME, jsonObject.getString(TokenConstant.FIRSTNAME));
         }

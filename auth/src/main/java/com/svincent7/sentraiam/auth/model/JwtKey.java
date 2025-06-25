@@ -29,12 +29,18 @@ public class JwtKey extends BaseEntity {
     @Column(name = "key_version", nullable = false)
     private String keyVersion;
 
-    @Column(name = "key_value", nullable = false, columnDefinition = "TEXT")
-    private String keyValue;
+    @Column(name = "private_key", nullable = false, columnDefinition = "TEXT")
+    private String privateKey;
+
+    @Column(name = "public_key", nullable = false, columnDefinition = "TEXT")
+    private String publicKey;
 
     @Column(name = "key_algorithm", nullable = false)
     @Enumerated(EnumType.STRING)
     private KeyAlgorithm keyAlgorithm;
+
+    @Column(name = "key_length", nullable = false)
+    private int keyLength;
 
     @Column(name = "expired_timestamp", nullable = false)
     private long expiredTimestamp;
@@ -49,7 +55,8 @@ public class JwtKey extends BaseEntity {
                 + "id='" + id + '\''
                 + ", tenantId='" + tenantId + '\''
                 + ", keyVersion='" + keyVersion + '\''
-                + ", keyValue='" + keyValue + '\''
+                + ", privateKey=[PROTECTED]" + '\''
+                + ", publicKey='" + publicKey + '\''
                 + ", keyAlgorithm=" + keyAlgorithm
                 + ", createdTimestamp=" + getCreatedTimestamp()
                 + ", expiredTimestamp=" + expiredTimestamp
