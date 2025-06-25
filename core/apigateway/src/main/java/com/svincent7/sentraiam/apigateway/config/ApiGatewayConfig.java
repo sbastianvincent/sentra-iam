@@ -11,4 +11,6 @@ import org.springframework.stereotype.Component;
 public class ApiGatewayConfig implements ConfigProperties {
     private boolean shouldRunInitializer;
     private String sslBundleName;
+
+    private String introspectionUri;
 }

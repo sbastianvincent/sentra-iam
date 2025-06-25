@@ -6,7 +6,6 @@ import com.svincent7.sentraiam.common.dto.credential.VerifyCredentialResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -14,6 +13,5 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface SentraIamIdentityClient extends IdentityClient {
 
     @RequestMapping(value = "/api/identity/v1/credentials/verify", method = RequestMethod.POST)
-    ResponseEntity<VerifyCredentialResponse> verifyCredentials(@RequestHeader("Authorization") String authorization,
-                                                               @RequestBody LoginRequest loginRequest);
+    ResponseEntity<VerifyCredentialResponse> verifyCredentials(@RequestBody LoginRequest loginRequest);
 }

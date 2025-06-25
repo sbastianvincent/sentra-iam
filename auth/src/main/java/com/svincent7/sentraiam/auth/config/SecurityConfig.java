@@ -43,7 +43,9 @@ public class SecurityConfig {
                     }
                     auth.anyRequest().denyAll();
                 })
-                .httpBasic(Customizer.withDefaults());
+                .x509(x509 -> {
+                    x509.subjectPrincipalRegex("CN=(.*?)(?:,|$)").userDetailsService(userDetailsService());
+                });
 
         return httpSecurity.build();
     }
@@ -51,8 +53,8 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails gateway = User.builder()
-                .username("client_id")
-                .password("{noop}client_secret")
+                .username("sentra-iam-apigateway")
+                .password("noop-password")
                 .authorities(EndpointRuleProvider.SCOPE_PREFIX + Permission.TOKEN_INTROSPECT.getPermission())
                 .build();
 

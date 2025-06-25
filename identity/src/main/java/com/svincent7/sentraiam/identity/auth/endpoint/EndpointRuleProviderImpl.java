@@ -135,6 +135,10 @@ public class EndpointRuleProviderImpl implements EndpointRuleProvider {
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.USERS_DELETE.getPermission()
                     )),
 
+            new EndpointRule(HttpMethod.POST, "/api/identity/v1/credentials/verify",
+                    Set.of(
+                            EndpointRuleProvider.SCOPE_PREFIX + Permission.CREDENTIALS_VERIFY.getPermission()
+                    )),
             new EndpointRule(HttpMethod.GET, "/api/identity/v1/credentials/**",
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.CREDENTIALS_GET.getPermission(),

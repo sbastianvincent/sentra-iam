@@ -9,13 +9,19 @@ import org.springframework.boot.ssl.SslBundles;
 import org.springframework.cloud.netflix.eureka.http.EurekaClientHttpRequestFactorySupplier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.oauth2.server.resource.introspection.ReactiveOpaqueTokenIntrospector;
+import org.springframework.security.oauth2.server.resource.introspection.SpringReactiveOpaqueTokenIntrospector;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 import javax.net.ssl.SSLException;
@@ -57,6 +63,7 @@ public class SecurityConfig {
                         .authenticated())
                 .oauth2ResourceServer(oauth2 ->
                         oauth2.opaqueToken(Customizer.withDefaults()));
+
         return serverHttpSecurity.build();
     }
 
@@ -81,5 +88,19 @@ public class SecurityConfig {
         }
 
         return HttpClient.create().secure(sslContextSpec -> sslContextSpec.sslContext(sslContext));
+    }
+
+    @Bean
+    public ReactiveOpaqueTokenIntrospector introspector(final ApiGatewayConfig config, final SslBundles sslBundles) {
+        HttpClient httpClient = httpClient(config, sslBundles);
+        WebClient customWebClient = WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .build();
+
+        return new SpringReactiveOpaqueTokenIntrospector(
+                config.getIntrospectionUri(),
+                customWebClient
+        );
     }
 }

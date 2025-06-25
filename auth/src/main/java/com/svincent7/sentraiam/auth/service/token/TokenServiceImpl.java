@@ -121,6 +121,8 @@ public class TokenServiceImpl implements TokenService {
             Claims claims = Jwts.parser().setSigningKey(jwtKey.getKeyValue()).parseClaimsJws(token).getBody();
             SentraClaims sentraClaims = new SentraClaims(claims, payload);
 
+            // TODO: SET PERMISSION HERE
+
             log.debug("authenticate::sentraClaims {}", sentraClaims);
             return sentraClaims;
         } catch (Exception e) {

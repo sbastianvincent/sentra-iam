@@ -1,7 +1,6 @@
 package com.svincent7.sentraiam.identity.filter;
 
 import com.svincent7.sentraiam.common.auth.SentraPrincipal;
-import com.svincent7.sentraiam.common.exception.UnauthorizedException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,7 +28,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     // TEMPORARY UNTIL TEMP_SERVICE_ACCOUNT_TOKEN is UPDATED
     private static final List<String> LIST_URL_WITHOUT_AUTHENTICATION = List.of(
-            "/api/identity/v1/credentials/verify"
     );
 
     @Override
@@ -43,7 +41,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
         String headerAuth = request.getHeader(HEADER_AUTHENTICATION);
         if (StringUtils.isEmpty(headerAuth) || !headerAuth.startsWith(BEARER_PREFIX)) {
-            throw new UnauthorizedException("Authorization header is empty");
+            filterChain.doFilter(request, response);
+            return;
         }
 
         String token = headerAuth.substring(BEARER_PREFIX.length());

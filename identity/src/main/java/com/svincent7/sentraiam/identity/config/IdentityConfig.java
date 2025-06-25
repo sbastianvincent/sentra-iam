@@ -16,4 +16,5 @@ public class IdentityConfig implements ConfigProperties {
     private String masterTenantName;
     private String masterUserUsername;
     private String masterUserPassword;
+    private String masterRoleName;
 }
