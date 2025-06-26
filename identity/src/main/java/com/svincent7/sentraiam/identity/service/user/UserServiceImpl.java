@@ -1,6 +1,7 @@
 package com.svincent7.sentraiam.identity.service.user;
 
 import com.svincent7.sentraiam.common.dto.role.RoleResponse;
+import com.svincent7.sentraiam.common.dto.role.RoleWithPermissions;
 import com.svincent7.sentraiam.common.dto.user.ModifyRoleRequest;
 import com.svincent7.sentraiam.common.dto.user.UserRequest;
 import com.svincent7.sentraiam.common.dto.user.UserResponse;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -71,5 +73,21 @@ public class UserServiceImpl extends UserService {
         UserRoleMapping mapping = new UserRoleMapping(user, roleEntity);
         userRoleRepository.delete(mapping);
         return getRoleByUserId(userId);
+    }
+
+    @Override
+    public List<RoleWithPermissions> getRoleWithPermissionsByUserId(final String userId) {
+        List<RoleWithPermissions> roleWithPermissions = new ArrayList<>();
+        List<RoleResponse> roles = getRoleByUserId(userId);
+        for (RoleResponse role : roles) {
+            RoleWithPermissions roleWithPermission = new RoleWithPermissions();
+            roleWithPermission.setId(role.getId());
+            roleWithPermission.setRoleName(role.getRoleName());
+            roleWithPermission.setTenantId(role.getTenantId());
+            roleWithPermission.setVersion(role.getVersion());
+            roleWithPermission.setPermissions(roleService.getPermissionsByRoleId(role.getId()));
+            roleWithPermissions.add(roleWithPermission);
+        }
+        return roleWithPermissions;
     }
 }

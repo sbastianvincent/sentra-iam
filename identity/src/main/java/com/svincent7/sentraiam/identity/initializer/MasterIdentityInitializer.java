@@ -6,6 +6,7 @@ import com.svincent7.sentraiam.common.dto.role.ModifyPermissionRequest;
 import com.svincent7.sentraiam.common.dto.role.RoleRequest;
 import com.svincent7.sentraiam.common.dto.role.RoleResponse;
 import com.svincent7.sentraiam.common.dto.tenant.TenantStatus;
+import com.svincent7.sentraiam.common.dto.user.ModifyRoleRequest;
 import com.svincent7.sentraiam.common.dto.user.UserRequest;
 import com.svincent7.sentraiam.common.dto.user.UserResponse;
 import com.svincent7.sentraiam.common.exception.ResourceNotFoundException;
@@ -81,7 +82,12 @@ public class MasterIdentityInitializer implements Initializer {
             roleResponse = roleService.create(roleRequest);
         }
 
+        ModifyRoleRequest modifyRoleRequest = new ModifyRoleRequest();
+        modifyRoleRequest.setRoleId(roleResponse.getId());
+        userService.addRoleToUserId(userResponse.getId(), modifyRoleRequest);
+
         for (String key : Permission.PERMISSIONS.keySet()) {
+            log.info("Adding permission: " + key + " to master role: " + identityConfig.getMasterRoleName());
             try {
                 PermissionEntity permission = permissionService.getPermissionByName(key);
                 ModifyPermissionRequest modifyPermissionRequest = new ModifyPermissionRequest();

@@ -1,4 +1,4 @@
-package com.svincent7.sentraiam.common.auth.token;
+package com.svincent7.sentraiam.common.crypto;
 
 import com.svincent7.sentraiam.common.dto.credential.TokenConstant;
 import com.svincent7.sentraiam.common.exception.UnauthorizedException;

@@ -5,13 +5,13 @@ public final class TokenConstant {
 
     }
 
-    public static final String ACTIVE = "active";
     public static final String KEY_ID = "kid";
     public static final String USERNAME = "uname";
     public static final String FIRSTNAME = "fname";
     public static final String LASTNAME = "lname";
     public static final String VERSION = "ver";
     public static final String TENANT_ID = "tid";
+    public static final String SCOPES = "scopes";
 
     public static final int TOKEN_HEADER_INDEX = 0;
     public static final int TOKEN_PAYLOAD_INDEX = TOKEN_HEADER_INDEX + 1;

@@ -2,6 +2,7 @@ package com.svincent7.sentraiam.identity.controller;
 
 import com.svincent7.sentraiam.common.controller.BaseController;
 import com.svincent7.sentraiam.common.dto.role.RoleResponse;
+import com.svincent7.sentraiam.common.dto.role.RoleWithPermissions;
 import com.svincent7.sentraiam.common.dto.user.ModifyRoleRequest;
 import com.svincent7.sentraiam.common.dto.user.UserRequest;
 import com.svincent7.sentraiam.common.dto.user.UserResponse;
@@ -44,5 +45,10 @@ public class UserController extends BaseController<UserEntity, UserRequest, User
     public ResponseEntity<List<RoleResponse>> deleteRoleFromUserId(final @PathVariable String userId,
             @Valid final @RequestBody ModifyRoleRequest modifyRoleRequest) {
         return ResponseEntity.ok(userService.deleteRoleFromUserId(userId, modifyRoleRequest));
+    }
+
+    @RequestMapping(path = "/{userId}/roles-permissions", method = RequestMethod.GET)
+    public ResponseEntity<List<RoleWithPermissions>> getRoleWithPermissionsByUserId(final @PathVariable String userId) {
+        return ResponseEntity.ok(userService.getRoleWithPermissionsByUserId(userId));
     }
 }

@@ -1,5 +1,6 @@
 package com.svincent7.sentraiam.apigateway.config;
 
+import com.svincent7.sentraiam.common.auth.AuthHeaderConstants;
 import com.svincent7.sentraiam.common.cert.SSLBundleEurekaClientHttpRequestFactorySupplier;
 import com.svincent7.sentraiam.common.config.ConfigProperties;
 import com.svincent7.sentraiam.common.dto.credential.TokenConstant;
@@ -16,7 +17,6 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -25,12 +25,12 @@ import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.WebFilter;
+import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
 import javax.net.ssl.SSLException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -105,7 +105,16 @@ public class SecurityConfig {
 
     @Bean
     public WebFilter authHeaderInjector() {
-        return (exchange, chain) -> ReactiveSecurityContextHolder.getContext()
+        return (exchange, chain) -> {
+            ServerHttpRequest request = exchange.getRequest();
+
+            // Prevent crafted header being sent to the Api Gateway
+            boolean hasSentraHeader = request.getHeaders().containsKey(AuthHeaderConstants.USER_ID_HEADER)
+                    || request.getHeaders().containsKey(AuthHeaderConstants.USERNAME_HEADER)
+                    || request.getHeaders().containsKey(AuthHeaderConstants.TENANT_ID_HEADER)
+                    || request.getHeaders().containsKey(AuthHeaderConstants.ROLES_HEADER);
+
+            return ReactiveSecurityContextHolder.getContext()
                 .flatMap(context -> {
                     var auth = context.getAuthentication();
 
@@ -113,23 +122,31 @@ public class SecurityConfig {
                         String userId = jwtAuth.getName();
                         String tenantId = jwtAuth.getToken().getClaim(TokenConstant.TENANT_ID);
                         String username = jwtAuth.getToken().getClaim(TokenConstant.USERNAME);
-                        String roles = jwtAuth.getAuthorities().stream()
-                                .map(GrantedAuthority::getAuthority)
-                                .collect(Collectors.joining(","));
+                        String roles = String.join(",", jwtAuth.getToken().getClaimAsStringList(TokenConstant.SCOPES));
 
                         ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
-                                .header("X-User-Id", userId)
-                                .header("X-Username", username)
-                                .header("X-Tenant-Id", tenantId)
-                                .header("X-Roles", roles)
+                                .header(AuthHeaderConstants.USER_ID_HEADER, userId)
+                                .header(AuthHeaderConstants.USERNAME_HEADER, username)
+                                .header(AuthHeaderConstants.TENANT_ID_HEADER, tenantId)
+                                .header(AuthHeaderConstants.ROLES_HEADER, roles)
                                 .build();
 
                         return chain.filter(exchange.mutate().request(mutatedRequest).build());
                     }
 
+                    if (hasSentraHeader) {
+                        return Mono.error(new IllegalStateException("Unauthorized header injection attempt"));
+                    }
+
                     // If not JWT auth, just continue
                     return chain.filter(exchange);
                 })
-                .switchIfEmpty(chain.filter(exchange)); // Handle when no security context
+                .switchIfEmpty(Mono.defer(() -> {
+                    if (hasSentraHeader) {
+                        return Mono.error(new IllegalStateException("Unauthorized header injection attempt"));
+                    }
+                    return chain.filter(exchange);
+                }));
+        };
     }
 }

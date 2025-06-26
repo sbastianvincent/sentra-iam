@@ -1,17 +1,12 @@
 package com.svincent7.sentraiam.common.auth;
 
-import com.svincent7.sentraiam.common.auth.token.TokenUtils;
-import com.svincent7.sentraiam.common.dto.credential.TokenConstant;
-import io.jsonwebtoken.Claims;
 import lombok.Getter;
 import lombok.ToString;
-import org.json.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serial;
 import java.util.Collection;
-import java.util.List;
 
 @ToString
 @Getter
@@ -21,33 +16,17 @@ public class SentraPrincipal implements Authentication {
 
     private final String tenantId;
     private final String userId;
-    private final String username;
+    private final String name;
     private boolean authenticated;
+    private final Collection<? extends GrantedAuthority> authorities;
 
     public SentraPrincipal(final String tenantIdInput, final String userIdInput, final String usernameInput,
-                           final boolean authenticatedInput) {
+                           final boolean authenticatedInput, final Collection<? extends GrantedAuthority> authoritiesInput) {
         this.tenantId = tenantIdInput;
         this.userId = userIdInput;
-        this.username = usernameInput;
+        this.name = usernameInput;
         this.authenticated = authenticatedInput;
-    }
-
-    public static SentraPrincipal fromToken(final String token) {
-        JSONObject payload = TokenUtils.parsePayloadFromToken(token);
-        String username = payload.getString(TokenConstant.USERNAME);
-        String userId = payload.getString(Claims.SUBJECT);
-        String tenantId = payload.getString(TokenConstant.TENANT_ID);
-        return new SentraPrincipal(tenantId, userId, username, true);
-    }
-
-    @Override
-    public String getName() {
-        return username;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        this.authorities = authoritiesInput;
     }
 
     @Override

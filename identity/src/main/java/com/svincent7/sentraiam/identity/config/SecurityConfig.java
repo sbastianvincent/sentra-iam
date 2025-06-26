@@ -1,5 +1,6 @@
 package com.svincent7.sentraiam.identity.config;
 
+import com.svincent7.sentraiam.common.auth.endpoint.EndpointRule;
 import com.svincent7.sentraiam.common.auth.endpoint.EndpointRuleProvider;
 import com.svincent7.sentraiam.common.cert.SSLBundleEurekaClientHttpRequestFactorySupplier;
 import com.svincent7.sentraiam.common.config.ConfigProperties;
@@ -34,7 +35,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(endpointRuleProvider.getPermittedEndpoints()).permitAll();
-                    auth.anyRequest().authenticated();
+                    for (EndpointRule rule : endpointRuleProvider.getEndpointRules()) {
+                        auth.requestMatchers(rule.method(), rule.path()).hasAnyAuthority(
+                                rule.authority().toArray(new String[0]));
+                    }
+                    auth.anyRequest().denyAll();
                 })
                 .addFilterBefore(new AuthenticationFilter(), X509AuthenticationFilter.class)
                 .x509(x509 -> {

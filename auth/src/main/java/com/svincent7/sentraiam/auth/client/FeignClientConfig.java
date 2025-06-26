@@ -27,10 +27,10 @@ public class FeignClientConfig {
 
         SSLContext sslContext = bundle.createSslContext();
 
-        Client apacheClient = new Client.Default(sslContext.getSocketFactory(),
+        Client client = new Client.Default(sslContext.getSocketFactory(),
                 SSLConnectionSocketFactory.getDefaultHostnameVerifier());
 
-        return new FeignBlockingLoadBalancerClient(apacheClient, loadBalancerClient,
+        return new FeignBlockingLoadBalancerClient(client, loadBalancerClient,
                 loadBalancerClientFactory, transformers);
     }
 }

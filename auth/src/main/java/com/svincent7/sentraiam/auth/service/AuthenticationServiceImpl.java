@@ -2,6 +2,7 @@ package com.svincent7.sentraiam.auth.service;
 
 import com.svincent7.sentraiam.auth.client.SentraIamIdentityClient;
 import com.svincent7.sentraiam.auth.config.SentraIamAuthConfig;
+import com.svincent7.sentraiam.auth.dto.GenerateAccessTokenRequest;
 import com.svincent7.sentraiam.auth.model.AccessToken;
 import com.svincent7.sentraiam.auth.model.RefreshToken;
 import com.svincent7.sentraiam.auth.service.jwtkey.JwtKeyResponse;
@@ -14,6 +15,7 @@ import com.svincent7.sentraiam.common.dto.auth.LogoutRequest;
 import com.svincent7.sentraiam.common.dto.auth.RefreshRequest;
 import com.svincent7.sentraiam.common.dto.credential.VerifyCredentialResponse;
 import com.svincent7.sentraiam.common.dto.credential.VerifyCredentialStatus;
+import com.svincent7.sentraiam.common.dto.role.RoleWithPermissions;
 import com.svincent7.sentraiam.common.dto.user.UserResponse;
 import com.svincent7.sentraiam.common.exception.AuthenticationException;
 import com.svincent7.sentraiam.common.exception.UnauthorizedException;
@@ -95,7 +97,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     private LoginResponse generateLoginResponse(final UserResponse userResponse) {
-        AccessToken accessToken = tokenService.generateAccessToken(userResponse);
+        ResponseEntity<List<RoleWithPermissions>> roleEntity = sentraIamIdentityClient
+                .getRoleWithPermissionsByUserId(userResponse.getId());
+        List<RoleWithPermissions> roleWithPermissions = roleEntity.getBody();
+        log.info("roleWithPermissios: {}", roleWithPermissions);
+        GenerateAccessTokenRequest request = new GenerateAccessTokenRequest();
+        request.setUser(userResponse);
+        request.setRoles(roleWithPermissions);
+        AccessToken accessToken = tokenService.generateAccessToken(request);
         String refreshToken = tokenService.generateRefreshToken(userResponse);
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setAccessToken(accessToken.getAccessToken());

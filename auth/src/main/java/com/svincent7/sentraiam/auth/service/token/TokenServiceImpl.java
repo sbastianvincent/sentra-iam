@@ -1,6 +1,7 @@
 package com.svincent7.sentraiam.auth.service.token;
 
 import com.svincent7.sentraiam.auth.config.SentraIamAuthConfig;
+import com.svincent7.sentraiam.auth.dto.GenerateAccessTokenRequest;
 import com.svincent7.sentraiam.auth.model.AccessToken;
 import com.svincent7.sentraiam.auth.model.RefreshToken;
 import com.svincent7.sentraiam.auth.repository.RefreshTokenRepository;
@@ -33,7 +34,8 @@ public class TokenServiceImpl implements TokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
-    public AccessToken generateAccessToken(final UserResponse userResponse) {
+    public AccessToken generateAccessToken(final GenerateAccessTokenRequest request) {
+        UserResponse userResponse = request.getUser();
         long currentTime = System.currentTimeMillis();
         String tenantId = userResponse.getTenantId();
         long expirationTime = currentTime + TimeUnit.MINUTES.toMillis(config.getTokenExpirationMinutes());
@@ -41,7 +43,7 @@ public class TokenServiceImpl implements TokenService {
         PrivateKey privateKey = CryptoUtil.loadPrivateKey(config.getJwtDefaultKeyPairAlgorithm(),
                 jwtKey.getPrivateKey());
 
-        Map<String, Object> additionalData = getExtractAdditionalMapData(userResponse);
+        Map<String, Object> additionalData = getExtractAdditionalMapData(request);
 
         CreateTokenRequest createTokenRequest = new CreateTokenRequest();
         createTokenRequest.setId(UUID.randomUUID().toString());
@@ -100,7 +102,8 @@ public class TokenServiceImpl implements TokenService {
         refreshTokenRepository.save(refreshToken);
     }
 
-    private Map<String, Object> getExtractAdditionalMapData(final UserResponse userResponse) {
+    private Map<String, Object> getExtractAdditionalMapData(final GenerateAccessTokenRequest request) {
+        final UserResponse userResponse = request.getUser();
         Map<String, Object> additionalData = new HashMap<>();
         additionalData.put(TokenConstant.USERNAME, userResponse.getUsername());
         if (!StringUtils.isEmpty(userResponse.getFirstName())) {
@@ -111,6 +114,7 @@ public class TokenServiceImpl implements TokenService {
         }
         additionalData.put(TokenConstant.VERSION, userResponse.getVersion());
         additionalData.put(TokenConstant.TENANT_ID, userResponse.getTenantId());
+        additionalData.put(TokenConstant.SCOPES, request.getPermissions());
         return additionalData;
     }
 }

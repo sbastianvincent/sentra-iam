@@ -29,7 +29,7 @@ public class EndpointRuleProviderImpl implements EndpointRuleProvider {
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.ROLES_LIST.getPermission()
                     )),
-            new EndpointRule(HttpMethod.GET, "/api/identity/v1/roles/*",
+            new EndpointRule(HttpMethod.GET, "/api/identity/v1/roles/**",
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.ROLES_LIST.getPermission(),
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.ROLES_GET.getPermission(),
@@ -41,12 +41,12 @@ public class EndpointRuleProviderImpl implements EndpointRuleProvider {
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.ROLES_CREATE.getPermission()
                     )),
-            new EndpointRule(HttpMethod.PUT, "/api/identity/v1/roles/*",
+            new EndpointRule(HttpMethod.PUT, "/api/identity/v1/roles/**",
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.ROLES_UPDATE.getPermission(),
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.ROLES_DELETE.getPermission()
                     )),
-            new EndpointRule(HttpMethod.DELETE, "/api/identity/v1/roles/*",
+            new EndpointRule(HttpMethod.DELETE, "/api/identity/v1/roles/**",
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.ROLES_DELETE.getPermission()
                     )),
@@ -73,14 +73,14 @@ public class EndpointRuleProviderImpl implements EndpointRuleProvider {
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.TENANTS_LIST.getPermission()
                     )),
-            new EndpointRule(HttpMethod.GET, "/api/identity/v1/tenants/*",
+            new EndpointRule(HttpMethod.GET, "/api/identity/v1/tenants/**",
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.TENANTS_LIST.getPermission(),
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.TENANTS_GET.getPermission(),
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.TENANTS_CREATE.getPermission(),
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.TENANTS_UPDATE.getPermission()
                     )),
-            new EndpointRule(HttpMethod.GET, "/api/identity/v1/tenants/by-name/*",
+            new EndpointRule(HttpMethod.GET, "/api/identity/v1/tenants/by-name/**",
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.TENANTS_LIST.getPermission(),
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.TENANTS_GET.getPermission()
@@ -89,7 +89,7 @@ public class EndpointRuleProviderImpl implements EndpointRuleProvider {
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.TENANTS_CREATE.getPermission()
                     )),
-            new EndpointRule(HttpMethod.PUT, "/api/identity/v1/tenants/*",
+            new EndpointRule(HttpMethod.PUT, "/api/identity/v1/tenants/**",
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.TENANTS_UPDATE.getPermission()
                     )),
@@ -98,7 +98,7 @@ public class EndpointRuleProviderImpl implements EndpointRuleProvider {
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.USERS_LIST.getPermission()
                     )),
-            new EndpointRule(HttpMethod.GET, "/api/identity/v1/users/*",
+            new EndpointRule(HttpMethod.GET, "/api/identity/v1/users/**",
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.USERS_LIST.getPermission(),
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.USERS_GET.getPermission(),
@@ -110,12 +110,12 @@ public class EndpointRuleProviderImpl implements EndpointRuleProvider {
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.USERS_CREATE.getPermission()
                     )),
-            new EndpointRule(HttpMethod.PUT, "/api/identity/v1/users/*",
+            new EndpointRule(HttpMethod.PUT, "/api/identity/v1/users/**",
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.USERS_UPDATE.getPermission(),
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.USERS_DELETE.getPermission()
                     )),
-            new EndpointRule(HttpMethod.DELETE, "/api/identity/v1/users/*",
+            new EndpointRule(HttpMethod.DELETE, "/api/identity/v1/users/**",
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.USERS_DELETE.getPermission()
                     )),
@@ -150,11 +150,11 @@ public class EndpointRuleProviderImpl implements EndpointRuleProvider {
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.CREDENTIALS_CREATE.getPermission()
                     )),
-            new EndpointRule(HttpMethod.PUT, "/api/identity/v1/credentials/*",
+            new EndpointRule(HttpMethod.PUT, "/api/identity/v1/credentials/**",
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.CREDENTIALS_UPDATE.getPermission()
                     )),
-            new EndpointRule(HttpMethod.DELETE, "/api/identity/v1/credentials/*",
+            new EndpointRule(HttpMethod.DELETE, "/api/identity/v1/credentials/**",
                     Set.of(
                             EndpointRuleProvider.SCOPE_PREFIX + Permission.CREDENTIALS_DELETE.getPermission()
                     ))
