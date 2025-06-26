@@ -78,7 +78,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public List<Object> getJwks(String tenantId) {
+    public List<Object> getJwks(final String tenantId) {
         JwtKeyResponse jwtKeyResponse = jwtKeyService.getTenantActiveJwtKey(tenantId);
         RSAPublicKey publicKey = (RSAPublicKey) CryptoUtil.loadPublicKey(config.getJwtDefaultKeyPairAlgorithm(),
                 jwtKeyResponse.getPublicKey());

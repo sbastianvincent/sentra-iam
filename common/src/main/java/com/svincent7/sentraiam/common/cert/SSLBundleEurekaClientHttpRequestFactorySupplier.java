@@ -25,14 +25,14 @@ public class SSLBundleEurekaClientHttpRequestFactorySupplier implements EurekaCl
     private static final int CONNECT_TIMEOUT_MS = 5000;
     private static final int READ_TIMEOUT_MS = 5000;
 
-    public SSLBundleEurekaClientHttpRequestFactorySupplier(final ConfigProperties properties,
-                                                           final SslBundles sslBundles) {
-        this.properties = properties;
-        this.sslBundles = sslBundles;
+    public SSLBundleEurekaClientHttpRequestFactorySupplier(final ConfigProperties propertiesInput,
+                                                           final SslBundles sslBundlesInput) {
+        this.properties = propertiesInput;
+        this.sslBundles = sslBundlesInput;
     }
 
     @Override
-    public ClientHttpRequestFactory get(SSLContext sslContext, HostnameVerifier hostnameVerifier) {
+    public ClientHttpRequestFactory get(final SSLContext sslContext, final HostnameVerifier hostnameVerifier) {
         var socketConfig = SocketConfig.custom()
                 .setSoTimeout(SOCKET_TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .build();

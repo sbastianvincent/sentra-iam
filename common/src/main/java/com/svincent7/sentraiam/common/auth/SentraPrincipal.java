@@ -21,7 +21,8 @@ public class SentraPrincipal implements Authentication {
     private final Collection<? extends GrantedAuthority> authorities;
 
     public SentraPrincipal(final String tenantIdInput, final String userIdInput, final String usernameInput,
-                           final boolean authenticatedInput, final Collection<? extends GrantedAuthority> authoritiesInput) {
+                           final boolean authenticatedInput,
+                           final Collection<? extends GrantedAuthority> authoritiesInput) {
         this.tenantId = tenantIdInput;
         this.userId = userIdInput;
         this.name = usernameInput;

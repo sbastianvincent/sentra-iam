@@ -18,8 +18,8 @@ public class SentraIamJwtDecoder implements ReactiveJwtDecoder {
     private final Map<String, ReactiveJwtDecoder> decoderCache = new ConcurrentHashMap<>();
     private final WebClient webClient;
 
-    public SentraIamJwtDecoder(final WebClient webClient) {
-        this.webClient = webClient;
+    public SentraIamJwtDecoder(final WebClient webClientInput) {
+        this.webClient = webClientInput;
     }
 
     @Override
@@ -34,9 +34,9 @@ public class SentraIamJwtDecoder implements ReactiveJwtDecoder {
                 .doOnError(e -> log.error("JWT Error", e));
     }
 
-    private ReactiveJwtDecoder resolveDecoder(final WebClient webClient, final String issuer) {
+    private ReactiveJwtDecoder resolveDecoder(final WebClient client, final String issuer) {
         return decoderCache.computeIfAbsent(issuer, iss -> NimbusReactiveJwtDecoder.withIssuerLocation(issuer)
-                .webClient(webClient)
+                .webClient(client)
                 .build());
     }
 }
