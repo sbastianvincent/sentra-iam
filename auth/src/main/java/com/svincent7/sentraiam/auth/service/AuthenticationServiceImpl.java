@@ -18,7 +18,6 @@ import com.svincent7.sentraiam.common.dto.credential.VerifyCredentialStatus;
 import com.svincent7.sentraiam.common.dto.role.RoleWithPermissions;
 import com.svincent7.sentraiam.common.dto.user.UserResponse;
 import com.svincent7.sentraiam.common.exception.AuthenticationException;
-import com.svincent7.sentraiam.common.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -63,11 +62,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         UserResponse user = response.getBody();
 
         if (user == null) {
-            throw new UnauthorizedException("Invalid refresh token");
+            throw new AuthenticationException("Invalid refresh token");
         }
 
         if (!user.isEnabled()) {
-            throw new UnauthorizedException("Identity is not active. Please contact Administrator");
+            throw new AuthenticationException("Identity is not active. Please contact Administrator");
         }
         return generateLoginResponse(user);
     }
