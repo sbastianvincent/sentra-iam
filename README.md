@@ -16,7 +16,6 @@ SentraIAM	&quot;Sentra&quot; (central in Bahasa) + IAM
 - 🔐 User authentication (JWT-based)
 - 🧑‍🤝‍🧑 Role-based access control (RBAC)
 - 🗝️ OAuth2 token issuance and validation
-- 🌐 Service-to-service trust and identity verification
 - 📁 PKI & certificate-based identity support (optional)
 - 🧪 Testable via Spring Boot profiles and mock integrations
 
@@ -28,5 +27,4 @@ SentraIAM	&quot;Sentra&quot; (central in Bahasa) + IAM
 - Spring Security
 - Spring Data JPA
 - PostgreSQL
-- Spring Cloud (APIGateway + Eureka Discovery)
 - PKI or custom CA for internal identity
